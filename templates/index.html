@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Business Intelligence Platform</title>
+  <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #0f1117;
+      color: #e0e0e0;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #1a1d27;
+      border-bottom: 1px solid #2e3250;
+      padding: 18px 32px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    header h1 {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    header span {
+      font-size: 0.8rem;
+      background: #2563eb;
+      color: #fff;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+
+    .kpi-bar {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+      padding: 24px 32px;
+      background: #1a1d27;
+      border-bottom: 1px solid #2e3250;
+    }
+
+    .kpi {
+      background: #0f1117;
+      border: 1px solid #2e3250;
+      border-radius: 10px;
+      padding: 16px 20px;
+    }
+
+    .kpi label {
+      font-size: 0.72rem;
+      color: #7a8099;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .kpi value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #fff;
+      display: block;
+    }
+
+    .kpi small {
+      font-size: 0.75rem;
+      color: #7a8099;
+    }
+
+    .main {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 0;
+      height: calc(100vh - 160px);
+    }
+
+    .charts {
+      padding: 24px 32px;
+      overflow-y: auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      align-content: start;
+    }
+
+    .chart-card {
+      background: #1a1d27;
+      border: 1px solid #2e3250;
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .chart-card h3 {
+      font-size: 0.85rem;
+      color: #9aa0bb;
+      margin-bottom: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .chart-card.wide {
+      grid-column: span 2;
+    }
+
+    .chatbot {
+  background: #1a1d27;
+  border-left: 1px solid #2e3250;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-height: 100vh; 
+}
+
+    .chat-header {
+      padding: 18px 20px;
+      border-bottom: 1px solid #2e3250;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chat-header h2 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .chat-header button {
+      font-size: 0.75rem;
+      color: #7a8099;
+      background: none;
+      border: 1px solid #2e3250;
+      padding: 4px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+   .chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 0; 
+}
+
+    .message {
+      max-width: 90%;
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 0.88rem;
+      line-height: 1.55;
+    }
+
+    .message.user {
+      background: #2563eb;
+      color: #fff;
+      align-self: flex-end;
+      border-bottom-right-radius: 4px;
+    }
+
+    .message.assistant {
+      background: #0f1117;
+      border: 1px solid #2e3250;
+      color: #d0d4e8;
+      align-self: flex-start;
+      border-bottom-left-radius: 4px;
+    }
+
+    .message.thinking {
+      background: #0f1117;
+      border: 1px solid #2e3250;
+      color: #7a8099;
+      font-style: italic;
+      align-self: flex-start;
+    }
+
+    .suggestions {
+      padding: 0 20px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .suggestion {
+      font-size: 0.78rem;
+      color: #7a8099;
+      background: #0f1117;
+      border: 1px solid #2e3250;
+      padding: 7px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: left;
+      transition: border-color 0.2s;
+    }
+
+    .suggestion:hover {
+      border-color: #2563eb;
+      color: #c0c8e8;
+    }
+
+    .chat-input {
+      padding: 16px 20px;
+      border-top: 1px solid #2e3250;
+      display: flex;
+      gap: 10px;
+    }
+
+    .chat-input input {
+      flex: 1;
+      background: #0f1117;
+      border: 1px solid #2e3250;
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: #e0e0e0;
+      font-size: 0.88rem;
+      outline: none;
+    }
+
+    .chat-input input:focus {
+      border-color: #2563eb;
+    }
+
+    .chat-input button {
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 18px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .chat-input button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #2e3250; border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Olist E-Commerce BI Platform</h1>
+  <span>AI Powered</span>
+</header>
+
+<div class="kpi-bar">
+  <div class="kpi">
+    <label>Total Orders</label>
+    <value id="kpi-orders">—</value>
+  </div>
+  <div class="kpi">
+    <label>Total Revenue</label>
+    <value id="kpi-revenue">—</value>
+  </div>
+  <div class="kpi">
+    <label>Avg Order Value</label>
+    <value id="kpi-aov">—</value>
+  </div>
+  <div class="kpi">
+    <label>Churn Rate</label>
+    <value id="kpi-churn">—</value>
+  </div>
+  <div class="kpi">
+    <label>Avg Review Score</label>
+    <value id="kpi-review">—</value>
+    <small>out of 5</small>
+  </div>
+</div>
+
+<div class="main">
+  <div class="charts">
+    <div class="chart-card wide"><h3>Monthly Revenue Trend</h3><div id="chart-revenue" style="height:220px"></div></div>
+    <div class="chart-card"><h3>Top Product Categories</h3><div id="chart-categories" style="height:260px"></div></div>
+    <div class="chart-card"><h3>Churn Rate by State</h3><div id="chart-churn" style="height:260px"></div></div>
+    <div class="chart-card"><h3>Review Score Distribution</h3><div id="chart-reviews" style="height:220px"></div></div>
+    <div class="chart-card"><h3>Delivery Performance</h3><div id="chart-delivery" style="height:220px"></div></div>
+  </div>
+
+  <div class="chatbot">
+    <div class="chat-header">
+      <h2>Ask the Data</h2>
+      <button onclick="resetChat()">Clear</button>
+    </div>
+
+    <div class="chat-messages" id="chat-messages">
+      <div class="message assistant">
+        Hi! I have analyzed 100,000+ orders from this dataset. Ask me anything about revenue, churn, delivery performance, or product trends.
+      </div>
+    </div>
+
+    <div class="suggestions">
+      <button class="suggestion" onclick="ask('What is driving the highest revenue?')">What is driving the highest revenue?</button>
+      <button class="suggestion" onclick="ask('Which states have the worst churn rates?')">Which states have the worst churn rates?</button>
+      <button class="suggestion" onclick="ask('How is delivery performance affecting reviews?')">How is delivery affecting reviews?</button>
+    </div>
+
+    <div class="chat-input">
+      <input type="text" id="question-input" placeholder="Ask a business question..." onkeydown="if(event.key==='Enter') sendQuestion()" />
+      <button id="send-btn" onclick="sendQuestion()">Ask</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const stats  = {{ stats | tojson }};
+  const charts = {{ charts | safe }};
+
+  const PLOTLY_LAYOUT = {
+    paper_bgcolor: "transparent",
+    plot_bgcolor:  "transparent",
+    font:  { color: "#9aa0bb", size: 11 },
+    margin: { t: 10, b: 40, l: 50, r: 10 },
+    xaxis: { gridcolor: "#2e3250", linecolor: "#2e3250" },
+    yaxis: { gridcolor: "#2e3250", linecolor: "#2e3250" },
+  };
+
+  const CONFIG = { displayModeBar: false, responsive: true };
+
+  // KPIs
+  document.getElementById("kpi-orders").textContent  = stats.total_orders.toLocaleString();
+  document.getElementById("kpi-revenue").textContent = "R$ " + (stats.total_revenue / 1e6).toFixed(1) + "M";
+  document.getElementById("kpi-aov").textContent     = "R$ " + stats.avg_order_value.toFixed(2);
+  document.getElementById("kpi-churn").textContent   = stats.churn_rate_pct + "%";
+  document.getElementById("kpi-review").textContent  = stats.avg_review_score.toFixed(1);
+
+  // Revenue trend
+  Plotly.newPlot("chart-revenue", [{
+    x: charts.revenue_by_month.map(d => d.period),
+    y: charts.revenue_by_month.map(d => d.revenue),
+    type: "scatter", mode: "lines+markers",
+    line: { color: "#2563eb", width: 2 },
+    marker: { color: "#2563eb", size: 5 },
+    fill: "tozeroy", fillcolor: "rgba(37,99,235,0.1)"
+  }], { ...PLOTLY_LAYOUT }, CONFIG);
+
+  // Top categories
+  const cats = charts.top_categories.slice().reverse();
+  Plotly.newPlot("chart-categories", [{
+    x: cats.map(d => d.revenue),
+    y: cats.map(d => d.category),
+    type: "bar", orientation: "h",
+    marker: { color: "#7c3aed" }
+  }], { ...PLOTLY_LAYOUT, margin: { t: 10, b: 40, l: 160, r: 10 } }, CONFIG);
+
+  // Churn by state
+  Plotly.newPlot("chart-churn", [{
+    x: charts.churn_by_state.map(d => d.state),
+    y: charts.churn_by_state.map(d => d.churn_rate),
+    type: "bar",
+    marker: { color: "#ef4444" }
+  }], { ...PLOTLY_LAYOUT }, CONFIG);
+
+  // Review scores
+  Plotly.newPlot("chart-reviews", [{
+    x: charts.review_score_distribution.map(d => d.score),
+    y: charts.review_score_distribution.map(d => d.count),
+    type: "bar",
+    marker: { color: ["#ef4444","#f97316","#eab308","#84cc16","#22c55e"] }
+  }], { ...PLOTLY_LAYOUT }, CONFIG);
+
+  // Delivery
+  Plotly.newPlot("chart-delivery", [{
+    labels: charts.delivery_performance.map(d => d.status),
+    values: charts.delivery_performance.map(d => d.count),
+    type: "pie",
+    marker: { colors: ["#22c55e", "#ef4444"] },
+    hole: 0.5,
+    textinfo: "label+percent"
+  }], { ...PLOTLY_LAYOUT, margin: { t: 10, b: 10, l: 10, r: 10 } }, CONFIG);
+
+  // Chat
+  async function sendQuestion() {
+    const input = document.getElementById("question-input");
+    const q = input.value.trim();
+    if (!q) return;
+    input.value = "";
+    ask(q);
+  }
+
+  async function ask(question) {
+    const messages = document.getElementById("chat-messages");
+    const btn = document.getElementById("send-btn");
+
+    messages.innerHTML += `<div class="message user">${question}</div>`;
+    messages.innerHTML += `<div class="message thinking" id="thinking">Thinking...</div>`;
+    messages.scrollTop = messages.scrollHeight;
+    btn.disabled = true;
+
+    try {
+      const res  = await fetch("/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question })
+      });
+      const data = await res.json();
+      document.getElementById("thinking").remove();
+      messages.innerHTML += `<div class="message assistant">${data.answer || data.error}</div>`;
+    } catch (e) {
+      document.getElementById("thinking").remove();
+      messages.innerHTML += `<div class="message assistant">Something went wrong. Please try again.</div>`;
+    }
+
+    btn.disabled = false;
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  async function resetChat() {
+    await fetch("/reset", { method: "POST" });
+    const messages = document.getElementById("chat-messages");
+    messages.innerHTML = `<div class="message assistant">Chat reset. Ask me anything about the data.</div>`;
+  }
+</script>
+</body>
+</html>
