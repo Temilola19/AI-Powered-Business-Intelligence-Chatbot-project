@@ -1,42 +1,56 @@
-from groq import Groq
 import os
-from dotenv import load_dotenv
 import json
-
-load_dotenv()
+from groq import Groq
 
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
-def ask(question: str, stats: dict, history: list) -> str:
 
-    system_prompt = f"""You are an expert business intelligence analyst for a Brazilian e-commerce company.
-You have access to the following real business metrics derived from 100,000+ orders:
+def format_history(history):
+    """Convert session history into LLM-friendly format"""
+    return [
+        {"role": msg["role"], "content": msg["content"]}
+        for msg in history
+        if msg["role"] in ["user", "assistant"]
+    ]
 
-{json.dumps(stats, indent=2)}
 
-Your job is to answer business questions clearly and concisely using this data.
-- Always reference specific numbers from the data when answering
-- If a question cannot be answered from the available data, say so clearly
-- Keep answers concise but insightful — 3 to 5 sentences max
-- Highlight actionable insights where relevant
-- Do not make up data that is not in the stats above
-"""
+def ask(question, stats, history):
+    messages = [
+        {
+            "role": "system",
+            "content": f"""You are an expert business intelligence analyst for an e-commerce dataset (Olist, a Brazilian marketplace).
 
-   
-    messages = [{"role": "system", "content": system_prompt}]
-    messages += history
+You have access to the following metrics — always use these exact numbers in your answers:
+
+## Summary KPIs
+- Total orders: {stats['total_orders']:,}
+- Total revenue: R$ {stats['total_revenue']:,.2f}
+- Average order value: R$ {stats['avg_order_value']:,.2f}
+- Average review score: {stats['avg_review_score']:.2f} / 5
+- Overall churn rate: {stats['churn_rate_pct']:.2f}%
+
+## Top 10 Product Categories by Revenue
+{json.dumps(stats.get('top_categories', []), indent=2)}
+
+## Top 15 States by Churn Rate (% of one-time buyers)
+{json.dumps(stats.get('churn_by_state', []), indent=2)}
+
+Rules:
+- Always use real numbers from the data above — never say data is unavailable.
+- Be concise but insightful; give business interpretation, not just raw figures.
+- When asked about categories or churn by state, reference the lists above directly."""
+        }
+    ]
+    messages.extend(history)
     messages.append({"role": "user", "content": question})
 
-    response = client.chat.completions.create(
-        model="openai/gpt-oss-20b", 
-        max_tokens=1000,
-        messages=messages
-    )
-
-  
-    return response.choices[0].message.content
-
-
-def format_history(history: list) -> list:
-    """Keep only the last 10 messages to avoid context overflow."""
-    return history[-10:]
+    try:
+        response = client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            messages=messages,
+            temperature=0.3,
+            max_tokens=500,
+        )
+        return response.choices[0].message.content.strip()
+    except Exception as e:
+        return f"Error: {str(e)}"

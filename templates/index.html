@@ -1,257 +1,186 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AI Business Intelligence Platform</title>
-  <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Olist BI Dashboard</title>
 
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #0f1117;
-      color: #e0e0e0;
-      min-height: 100vh;
-    }
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
 
-    header {
-      background: #1a1d27;
-      border-bottom: 1px solid #2e3250;
-      padding: 18px 32px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
 
-    header h1 {
-      font-size: 1.3rem;
-      font-weight: 600;
-      color: #fff;
-    }
-
-    header span {
-      font-size: 0.8rem;
-      background: #2563eb;
-      color: #fff;
-      padding: 3px 10px;
-      border-radius: 20px;
-      font-weight: 500;
-    }
-
-    .kpi-bar {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 16px;
-      padding: 24px 32px;
-      background: #1a1d27;
-      border-bottom: 1px solid #2e3250;
-    }
-
-    .kpi {
-      background: #0f1117;
-      border: 1px solid #2e3250;
-      border-radius: 10px;
-      padding: 16px 20px;
-    }
-
-    .kpi label {
-      font-size: 0.72rem;
-      color: #7a8099;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      display: block;
-      margin-bottom: 6px;
-    }
-
-    .kpi value {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: #fff;
-      display: block;
-    }
-
-    .kpi small {
-      font-size: 0.75rem;
-      color: #7a8099;
-    }
-
-    .main {
-      display: grid;
-      grid-template-columns: 1fr 380px;
-      gap: 0;
-      height: calc(100vh - 160px);
-    }
-
-    .charts {
-      padding: 24px 32px;
-      overflow-y: auto;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-      align-content: start;
-    }
-
-    .chart-card {
-      background: #1a1d27;
-      border: 1px solid #2e3250;
-      border-radius: 12px;
-      padding: 20px;
-    }
-
-    .chart-card h3 {
-      font-size: 0.85rem;
-      color: #9aa0bb;
-      margin-bottom: 14px;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .chart-card.wide {
-      grid-column: span 2;
-    }
-
-    .chatbot {
-  background: #1a1d27;
-  border-left: 1px solid #2e3250;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  max-height: 100vh; 
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background:#0f1117;
+  color:#e0e0e0;
 }
 
-    .chat-header {
-      padding: 18px 20px;
-      border-bottom: 1px solid #2e3250;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .chat-header h2 {
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: #fff;
-    }
-
-    .chat-header button {
-      font-size: 0.75rem;
-      color: #7a8099;
-      background: none;
-      border: 1px solid #2e3250;
-      padding: 4px 10px;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-   .chat-messages {
-  flex: 1;
-  overflow-y: auto;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  min-height: 0; 
+/* HEADER */
+header {
+  background:#1a1d27;
+  padding:18px 30px;
+  border-bottom:1px solid #2e3250;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+header h1 { font-size:1.2rem; }
+header span {
+  background:#2563eb;
+  padding:4px 10px;
+  border-radius:20px;
+  font-size:0.75rem;
 }
 
-    .message {
-      max-width: 90%;
-      padding: 12px 16px;
-      border-radius: 12px;
-      font-size: 0.88rem;
-      line-height: 1.55;
-    }
+/* KPIs */
+.kpis {
+  display:grid;
+  grid-template-columns: repeat(5,1fr);
+  gap:16px;
+  padding:20px 30px;
+  background:#1a1d27;
+}
+.kpi {
+  background:#0f1117;
+  border:1px solid #2e3250;
+  border-radius:10px;
+  padding:14px;
 
-    .message.user {
-      background: #2563eb;
-      color: #fff;
-      align-self: flex-end;
-      border-bottom-right-radius: 4px;
-    }
+}
+.kpi label {
+  font-size:0.7rem;
+  color:#7a8099;
+  margin-right: 6px;
+}
+.kpi span {
+  font-size:1.4rem;
+  font-weight:700;
+}
 
-    .message.assistant {
-      background: #0f1117;
-      border: 1px solid #2e3250;
-      color: #d0d4e8;
-      align-self: flex-start;
-      border-bottom-left-radius: 4px;
-    }
+/* MAIN */
+.main {
+  display:grid;
+  grid-template-columns: 1fr 360px;
+  height: calc(100vh - 140px);
+}
 
-    .message.thinking {
-      background: #0f1117;
-      border: 1px solid #2e3250;
-      color: #7a8099;
-      font-style: italic;
-      align-self: flex-start;
-    }
+/* CHARTS */
+.charts {
+  padding:20px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+  overflow:auto;
+}
+.card {
+  background:#1a1d27;
+  border:1px solid #2e3250;
+  border-radius:12px;
+  padding:16px;
+}
+.card h3 {
+  font-size:0.75rem;
+  color:#7a8099;
+  margin-bottom:10px;
+}
+.wide { grid-column: span 2; }
 
-    .suggestions {
-      padding: 0 20px 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
+/* CHAT */
+.chat {
+  border-left:1px solid #2e3250;
+  display:flex;
+  flex-direction:column;
+}
 
-    .suggestion {
-      font-size: 0.78rem;
-      color: #7a8099;
-      background: #0f1117;
-      border: 1px solid #2e3250;
-      padding: 7px 12px;
-      border-radius: 8px;
-      cursor: pointer;
-      text-align: left;
-      transition: border-color 0.2s;
-    }
+/* CHAT HEADER */
+.chat-header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:12px 16px;
+  border-bottom:1px solid #2e3250;
+}
+.chat-header button {
+  background:none;
+  border:1px solid #2e3250;
+  color:#aaa;
+  padding:4px 10px;
+  border-radius:6px;
+  cursor:pointer;
+}
+.chat-header button:hover {
+  border-color:#2563eb;
+  color:white;
+}
 
-    .suggestion:hover {
-      border-color: #2563eb;
-      color: #c0c8e8;
-    }
+.chat-box {
+  flex:1;
+  overflow:auto;
+  padding:16px;
+}
 
-    .chat-input {
-      padding: 16px 20px;
-      border-top: 1px solid #2e3250;
-      display: flex;
-      gap: 10px;
-    }
+/* MESSAGES */
+.msg {
+  margin-bottom:10px;
+  padding:10px;
+  border-radius:10px;
+  font-size:0.85rem;
+}
+.user {
+  background:#2563eb;
+  text-align:right;
+}
+.bot {
+  background:#0f1117;
+  border:1px solid #2e3250;
+}
 
-    .chat-input input {
-      flex: 1;
-      background: #0f1117;
-      border: 1px solid #2e3250;
-      border-radius: 8px;
-      padding: 10px 14px;
-      color: #e0e0e0;
-      font-size: 0.88rem;
-      outline: none;
-    }
+/* SUGGESTIONS */
+.suggestions {
+  padding:10px;
+}
+.suggestions button {
+  width:100%;
+  margin-bottom:6px;
+  background:#0f1117;
+  border:1px solid #2e3250;
+  color:#aaa;
+  padding:6px;
+  border-radius:6px;
+  cursor:pointer;
+}
+.suggestions button:hover {
+  border-color:#2563eb;
+  color:white;
+}
 
-    .chat-input input:focus {
-      border-color: #2563eb;
-    }
-
-    .chat-input button {
-      background: #2563eb;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      padding: 10px 18px;
-      font-size: 0.88rem;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .chat-input button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #2e3250; border-radius: 3px; }
-  </style>
+/* INPUT */
+.chat-input {
+  display:flex;
+  padding:12px;
+  border-top:1px solid #2e3250;
+}
+input {
+  flex:1;
+  padding:10px;
+  background:#0f1117;
+  border:1px solid #2e3250;
+  color:white;
+  border-radius:6px;
+}
+button.send {
+  margin-left:8px;
+  padding:10px 14px;
+  background:#2563eb;
+  border:none;
+  border-radius:6px;
+  color:white;
+  cursor:pointer;
+}
+</style>
 </head>
+
 <body>
 
 <header>
@@ -259,172 +188,237 @@
   <span>AI Powered</span>
 </header>
 
-<div class="kpi-bar">
-  <div class="kpi">
-    <label>Total Orders</label>
-    <value id="kpi-orders">—</value>
-  </div>
-  <div class="kpi">
-    <label>Total Revenue</label>
-    <value id="kpi-revenue">—</value>
-  </div>
-  <div class="kpi">
-    <label>Avg Order Value</label>
-    <value id="kpi-aov">—</value>
-  </div>
-  <div class="kpi">
-    <label>Churn Rate</label>
-    <value id="kpi-churn">—</value>
-  </div>
-  <div class="kpi">
-    <label>Avg Review Score</label>
-    <value id="kpi-review">—</value>
-    <small>out of 5</small>
-  </div>
+<div class="kpis">
+  <div class="kpi"><label >Total Orders</label><span id="orders"></span></div>
+  <div class="kpi"><label >Total Revenue</label><span id="revenue"></span></div>
+  <div class="kpi"><label >Avg Order Value</label><span id="aov"></span></div>
+  <div class="kpi"><label >Churn Rate</label><span id="churn"></span></div>
+  <div class="kpi"><label >Avg Review</label><span id="review"></span></div>
 </div>
 
 <div class="main">
+
+  <!-- CHARTS -->
   <div class="charts">
-    <div class="chart-card wide"><h3>Monthly Revenue Trend</h3><div id="chart-revenue" style="height:220px"></div></div>
-    <div class="chart-card"><h3>Top Product Categories</h3><div id="chart-categories" style="height:260px"></div></div>
-    <div class="chart-card"><h3>Churn Rate by State</h3><div id="chart-churn" style="height:260px"></div></div>
-    <div class="chart-card"><h3>Review Score Distribution</h3><div id="chart-reviews" style="height:220px"></div></div>
-    <div class="chart-card"><h3>Delivery Performance</h3><div id="chart-delivery" style="height:220px"></div></div>
+    <div class="card wide"><h3>Monthly Revenue Trend</h3><div id="rev" style="height:260px"></div></div>
+    <div class="card"><h3>Top Product Categories</h3><div id="cat" style="height:280px"></div></div>
+    <div class="card"><h3>Churn Rate by State</h3><div id="churnChart" style="height:280px"></div></div>
+    <div class="card"><h3>Review Score Distribution</h3><div id="reviews" style="height:280px"></div></div>
+    <div class="card"><h3>Delivery Performance</h3><div id="delivery" style="height:280px"></div></div>
   </div>
 
-  <div class="chatbot">
+  <!-- CHAT -->
+  <div class="chat">
+
     <div class="chat-header">
-      <h2>Ask the Data</h2>
+      <strong>Ask the Data</strong>
       <button onclick="resetChat()">Clear</button>
     </div>
 
-    <div class="chat-messages" id="chat-messages">
-      <div class="message assistant">
-        Hi! I have analyzed 100,000+ orders from this dataset. Ask me anything about revenue, churn, delivery performance, or product trends.
-      </div>
+    <div class="chat-box" id="chat">
+      <div class="msg bot">Ask me anything about the data.</div>
     </div>
 
     <div class="suggestions">
-      <button class="suggestion" onclick="ask('What is driving the highest revenue?')">What is driving the highest revenue?</button>
-      <button class="suggestion" onclick="ask('Which states have the worst churn rates?')">Which states have the worst churn rates?</button>
-      <button class="suggestion" onclick="ask('How is delivery performance affecting reviews?')">How is delivery affecting reviews?</button>
+      <button onclick="askQ('What is driving the highest revenue?')">What is driving the highest revenue?</button>
+      <button onclick="askQ('Which states have the worst churn rates?')">Worst churn states</button>
+      <button onclick="askQ('How does delivery affect reviews?')">Delivery vs reviews</button>
     </div>
 
     <div class="chat-input">
-      <input type="text" id="question-input" placeholder="Ask a business question..." onkeydown="if(event.key==='Enter') sendQuestion()" />
-      <button id="send-btn" onclick="sendQuestion()">Ask</button>
+      <input id="q" placeholder="Ask..." onkeydown="if(event.key==='Enter') send()" />
+      <button class="send" onclick="send()">Send</button>
     </div>
+
   </div>
+
 </div>
 
 <script>
-  const stats  = {{ stats | tojson }};
-  const charts = {{ charts | safe }};
+const stats  = {{ stats  | tojson }};
+const charts = {{ charts | tojson }};
 
-  const PLOTLY_LAYOUT = {
-    paper_bgcolor: "transparent",
-    plot_bgcolor:  "transparent",
-    font:  { color: "#9aa0bb", size: 11 },
-    margin: { t: 10, b: 40, l: 50, r: 10 },
-    xaxis: { gridcolor: "#2e3250", linecolor: "#2e3250" },
-    yaxis: { gridcolor: "#2e3250", linecolor: "#2e3250" },
-  };
+// Debug: log raw data so we can see exactly what arrived
+console.log("=== CHARTS DATA ===", JSON.stringify(charts, null, 2));
+console.log("top_categories sample:", charts.top_categories && charts.top_categories[0]);
+console.log("churn_by_state sample:", charts.churn_by_state  && charts.churn_by_state[0]);
 
-  const CONFIG = { displayModeBar: false, responsive: true };
+/* ================= KPI ================= */
+document.getElementById("orders").innerText  = stats.total_orders.toLocaleString();
+document.getElementById("revenue").innerText = "R$ " + (stats.total_revenue / 1e6).toFixed(1) + "M";
+document.getElementById("aov").innerText     = "R$ " + stats.avg_order_value.toFixed(2);
+document.getElementById("churn").innerText   = stats.churn_rate_pct.toFixed(2) + "%";
+document.getElementById("review").innerText  = stats.avg_review_score.toFixed(1);
 
-  // KPIs
-  document.getElementById("kpi-orders").textContent  = stats.total_orders.toLocaleString();
-  document.getElementById("kpi-revenue").textContent = "R$ " + (stats.total_revenue / 1e6).toFixed(1) + "M";
-  document.getElementById("kpi-aov").textContent     = "R$ " + stats.avg_order_value.toFixed(2);
-  document.getElementById("kpi-churn").textContent   = stats.churn_rate_pct + "%";
-  document.getElementById("kpi-review").textContent  = stats.avg_review_score.toFixed(1);
+/* ================= HELPERS ================= */
+function safe(val) {
+  return Array.isArray(val) && val.length > 0 ? val : null;
+}
 
-  // Revenue trend
-  Plotly.newPlot("chart-revenue", [{
-    x: charts.revenue_by_month.map(d => d.period),
-    y: charts.revenue_by_month.map(d => d.revenue),
+/* ================= DARK THEME ================= */
+const BASE = {
+  paper_bgcolor: "rgba(0,0,0,0)",
+  plot_bgcolor:  "rgba(0,0,0,0)",
+  font:   { color: "#9aa0bb" },
+  xaxis:  { gridcolor: "#2e3250", zeroline: false },
+  yaxis:  { gridcolor: "#2e3250", zeroline: false },
+  autosize: true
+};
+const CFG = { displayModeBar: false, responsive: true };
+
+/* ================= REVENUE ================= */
+const rev = safe(charts.revenue_by_month);
+if (rev) {
+  Plotly.newPlot("rev", [{
+    x:    rev.map(d => d.period),
+    y:    rev.map(d => d.revenue),
     type: "scatter", mode: "lines+markers",
-    line: { color: "#2563eb", width: 2 },
-    marker: { color: "#2563eb", size: 5 },
-    fill: "tozeroy", fillcolor: "rgba(37,99,235,0.1)"
-  }], { ...PLOTLY_LAYOUT }, CONFIG);
+    line: { color: "#2563eb" }
+  }], { ...BASE, margin: { t:20, b:40, l:60, r:10 } }, CFG);
+} else {
+  document.getElementById("rev").innerText = "No data";
+}
 
-  // Top categories
-  const cats = charts.top_categories.slice().reverse();
-  Plotly.newPlot("chart-categories", [{
-    x: cats.map(d => d.revenue),
-    y: cats.map(d => d.category),
-    type: "bar", orientation: "h",
-    marker: { color: "#7c3aed" }
-  }], { ...PLOTLY_LAYOUT, margin: { t: 10, b: 40, l: 160, r: 10 } }, CONFIG);
+/* ================= CATEGORIES ================= */
+const catsRaw = safe(charts.top_categories);
 
-  // Churn by state
-  Plotly.newPlot("chart-churn", [{
-    x: charts.churn_by_state.map(d => d.state),
-    y: charts.churn_by_state.map(d => d.churn_rate),
+if (catsRaw) {
+
+  const cats = Array.isArray(catsRaw) ? catsRaw : [catsRaw];
+
+  
+  const xVals = cats.map(d => d.category).slice().reverse();
+  const yVals = cats.map(d => d.revenue).slice().reverse();
+
+  Plotly.newPlot("cat", [{
+  x: xVals,
+  y: yVals,
+  type: "bar",
+  orientation: "v",
+  marker: { color: "#2563eb" }
+}], {
+  paper_bgcolor: "#1a1d27",   
+  plot_bgcolor:  "#1a1d27",   
+  font: { color: "#e0e0e0" }, 
+  ...BASE,
+  
+  xaxis: { gridcolor: "#2e3250" },
+  yaxis: { title: "Revenue", gridcolor: "#2e3250" },
+
+  margin: { t:10, b:70, l:70, r:70 }
+}, {
+  displayModeBar: false,
+  responsive: true
+});
+
+}
+
+/* ================= CHURN ================= */
+const churnRaw = safe(charts.churn_by_state);
+
+if (churnRaw) {
+
+  console.log("CHURN RAW:", churnRaw);
+
+  const churn = Array.isArray(churnRaw) ? churnRaw : [churnRaw];
+
+  const xVals = churn.map(d => d.state);
+  const yVals = churn.map(d => Number(d.churn_rate));
+
+  console.log("X:", xVals);
+  console.log("Y:", yVals);
+
+  Plotly.newPlot("churnChart", [{
+    x: xVals,
+    y: yVals,
     type: "bar",
-    marker: { color: "#ef4444" }
-  }], { ...PLOTLY_LAYOUT }, CONFIG);
+    marker: { color: "#2563eb" }
+  }],{
+  paper_bgcolor: "#1a1d27",   
+  plot_bgcolor:  "#1a1d27",   
+  font: { color: "#e0e0e0" }, 
+  ...BASE,
+  xaxis: { title: "State" ,gridcolor: "#2e3250" },
+  yaxis: { title: "Churn Rate" ,gridcolor: "#2e3250" },
 
-  // Review scores
-  Plotly.newPlot("chart-reviews", [{
-    x: charts.review_score_distribution.map(d => d.score),
-    y: charts.review_score_distribution.map(d => d.count),
-    type: "bar",
-    marker: { color: ["#ef4444","#f97316","#eab308","#84cc16","#22c55e"] }
-  }], { ...PLOTLY_LAYOUT }, CONFIG);
+  margin: { t:10, b:70, l:70, r:70 }
+}, {
+  displayModeBar: false,
+  responsive: true
+});
 
-  // Delivery
-  Plotly.newPlot("chart-delivery", [{
-    labels: charts.delivery_performance.map(d => d.status),
-    values: charts.delivery_performance.map(d => d.count),
-    type: "pie",
-    marker: { colors: ["#22c55e", "#ef4444"] },
-    hole: 0.5,
-    textinfo: "label+percent"
-  }], { ...PLOTLY_LAYOUT, margin: { t: 10, b: 10, l: 10, r: 10 } }, CONFIG);
+} else {
+  document.getElementById("churnChart").innerText = "No data";
+}
+/* ================= REVIEWS ================= */
+const reviews = safe(charts.review_score_distribution);
 
-  // Chat
-  async function sendQuestion() {
-    const input = document.getElementById("question-input");
-    const q = input.value.trim();
-    if (!q) return;
-    input.value = "";
-    ask(q);
+Plotly.newPlot("reviews", [{
+  x: reviews.map(d => String(d.score)),
+  y: reviews.map(d => d.count),
+  type: "bar",
+  marker: { 
+    color: "#2563eb"
+    
   }
+}], {
+  
+  paper_bgcolor: "#1a1d27",   
+  plot_bgcolor:  "#1a1d27",   
+  font: { color: "#e0e0e0" }, 
 
-  async function ask(question) {
-    const messages = document.getElementById("chat-messages");
-    const btn = document.getElementById("send-btn");
+  ...BASE,
+ margin: { t:10, b:70, l:70, r:70 },
+  xaxis: { title: "Review Score" ,gridcolor: "#2e3250"},
+  yaxis: { title: "Number of Reviews", gridcolor: "#2e3250" }
+}, CFG);
+/* ================= DELIVERY ================= */
+const delivery = safe(charts.delivery_performance);
+if (delivery) {
+  Plotly.newPlot("delivery", [{
+    labels: delivery.map(d => d.status),
+    values: delivery.map(d => d.count),
+    type:   "pie", hole: 0.5,
+    marker: { colors: ["#22c55e", "#ef4444"] }
+  }], { ...BASE, margin: { t:20, b:20, l:10, r:10 } }, CFG);
+} else {
+  document.getElementById("delivery").innerText = "No data";
+}
 
-    messages.innerHTML += `<div class="message user">${question}</div>`;
-    messages.innerHTML += `<div class="message thinking" id="thinking">Thinking...</div>`;
-    messages.scrollTop = messages.scrollHeight;
-    btn.disabled = true;
 
-    try {
-      const res  = await fetch("/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question })
-      });
-      const data = await res.json();
-      document.getElementById("thinking").remove();
-      messages.innerHTML += `<div class="message assistant">${data.answer || data.error}</div>`;
-    } catch (e) {
-      document.getElementById("thinking").remove();
-      messages.innerHTML += `<div class="message assistant">Something went wrong. Please try again.</div>`;
-    }
+/* ================= CHAT ================= */
+async function send(){
+  const input = document.getElementById("q");
+  const q = input.value.trim();
+  if(!q) return;
+  input.value="";
+  askQ(q);
+}
 
-    btn.disabled = false;
-    messages.scrollTop = messages.scrollHeight;
-  }
+async function askQ(q){
+  const box = document.getElementById("chat");
+  box.innerHTML += `<div class="msg user">${q}</div>`;
 
-  async function resetChat() {
-    await fetch("/reset", { method: "POST" });
-    const messages = document.getElementById("chat-messages");
-    messages.innerHTML = `<div class="message assistant">Chat reset. Ask me anything about the data.</div>`;
-  }
+  const res = await fetch("/chat",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({question:q})
+  });
+
+  const data = await res.json();
+
+  box.innerHTML += `<div class="msg bot">${data.answer || data.error}</div>`;
+  box.scrollTop = box.scrollHeight;
+}
+
+/* ================= RESET ================= */
+async function resetChat(){
+  await fetch("/reset",{method:"POST"});
+  document.getElementById("chat").innerHTML =
+    `<div class="msg bot">Chat reset. Ask me anything about the data.</div>`;
+}
+charts.churn_by_state[0]
 </script>
+
 </body>
 </html>
