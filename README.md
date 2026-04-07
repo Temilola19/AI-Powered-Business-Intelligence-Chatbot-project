@@ -1,8 +1,9 @@
 # Olist E-Commerce BI Dashboard
 
-An AI-powered business intelligence dashboard built on the [Olist Brazilian E-Commerce dataset](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce). Visualizes key metrics across revenue, churn, delivery, and reviews — with a conversational AI analyst you can ask questions in plain English.
+An AI-powered business intelligence dashboard built on the [Olist Brazilian E-Commerce dataset](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce). Visualizes key metrics across revenue, churn, delivery, and reviews with a conversational AI analyst you can ask questions in plain English.
 
-![Python](https://img.shields.io/badge/Python-3.10+-blue) ![Flask](https://img.shields.io/badge/Flask-3.x-lightgrey) ![Groq](https://img.shields.io/badge/LLM-Groq%20Llama3-orange)
+<img width="1788" height="1002" alt="Screenshot 2026-04-01 at 10 42 40 PM" src="https://github.com/user-attachments/assets/5285841e-10c9-4c05-86ce-2fbeb3de2f72" />
+
 
 ---
 
@@ -20,7 +21,7 @@ An AI-powered business intelligence dashboard built on the [Olist Brazilian E-Co
 ```
 your-project/
 ├── app.py                  # Flask app + routes
-├── .env                    # API keys (never commit this)
+├── .env                    # API keys
 ├── requirements.txt
 ├── templates/
 │   └── index.html          # Frontend dashboard
@@ -118,5 +119,5 @@ python-dotenv
 
 ## Important
 
-- Add `.env` to your `.gitignore` — never commit your API key
-- The dataset is not included in this repo — download it from Kaggle
+- Add `.env` to your `.gitignore` 
+- The dataset is not included in this repo, download it from Kaggle
